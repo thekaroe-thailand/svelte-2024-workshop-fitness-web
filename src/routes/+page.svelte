@@ -21,7 +21,7 @@
         };
 
         const res = await axios.post(
-          "http://localhost:3000/api/user/singin",
+          "http://localhost:3000/api/user/signIn",
           payload
         );
 
