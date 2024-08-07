@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import Swal from "sweetalert2";
   import config from "../config";
+  import { goto } from "$app/navigation";
 
   let name = "";
 
@@ -30,6 +31,22 @@
       });
     }
   };
+
+  const singOut = async () => {
+    const button = await Swal.fire({
+      title: "ออกจากระบบ",
+      text: "คุณต้องการออกจากระบบ ใช่หรือไม่",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+    });
+
+    if (button.isConfirmed) {
+      localStorage.removeItem("fitness_token");
+      name = "";
+      goto("/");
+    }
+  };
 </script>
 
 <div class="wrapper">
@@ -41,7 +58,16 @@
     <div class="sidebar">
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="info">
-          <div class="d-block text-white">User: {name}</div>
+          {#if name != undefined}
+            <div class="d-block text-white">
+              User: {name}
+              <div class="mt-2">
+                <button class="btn btn-danger" on:click={() => singOut()}>
+                  <i class="fa fa-times mr-2"></i>Sign Out
+                </button>
+              </div>
+            </div>
+          {/if}
         </div>
       </div>
 
