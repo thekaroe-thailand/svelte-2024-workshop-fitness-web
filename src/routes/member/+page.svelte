@@ -5,8 +5,6 @@
   import config from "../../config";
   import { onMount } from "svelte";
   import dayjs from "dayjs";
-  import { expoIn } from "svelte/easing";
-  import Counter from "../Counter.svelte";
 
   let name = "";
   let gender = "male";
@@ -23,6 +21,7 @@
   let membershipExpireDate = null;
   let remark = "";
   let memberships = [];
+  let membership_id = 0; // เอาไว้แก้ไขข้อมูล ประวัติการต่ออายุสมาชิก
 
   const save = async () => {
     try {
@@ -146,7 +145,16 @@
         remark: remark,
       };
 
-      await axios.post(config.apiPath + "/api/member/membership", payload);
+      if (membership_id > 0) {
+        await axios.put(
+          config.apiPath + "/api/member/membershipUpdate/" + membership_id,
+          payload
+        );
+      } else {
+        await axios.post(config.apiPath + "/api/member/membership", payload);
+      }
+
+      membership_id = 0; // reset เผื่อจะทำการเพิ่มรายการ เป็นลำดับต่อไป
 
       fetchData();
 
@@ -176,6 +184,43 @@
         icon: "error",
       });
     }
+  };
+
+  const removeHistory = async (item) => {
+    try {
+      const button = await Swal.fire({
+        title: "ลบประวัติการต่ออายุสมาชิก",
+        text: "ยืนยันการลบประวัติ",
+        icon: "question",
+        showCancelButton: true,
+        showConfirmButton: true,
+      });
+
+      if (button.isConfirmed) {
+        const res = await axios.delete(
+          config.apiPath + "/api/member/removeHistory/" + item.id
+        );
+
+        if (res.data.message === "success") {
+          showHistory({ id: item.member_id });
+        }
+      }
+    } catch (e) {
+      Swal.fire({
+        title: "error",
+        text: e.message,
+        icon: "error",
+      });
+    }
+  };
+
+  const chooseHistory = (item) => {
+    name = item.Member.name;
+    membershipExpireDate = dayjs(item.Member.expireDate).format("YYYY-MM-DD");
+    remark = item.remark;
+    money = item.money;
+    membership_id = item.id;
+    id = item.member_id; // จะได้รู้ว่าเป็นสมาชิกคนไหน
   };
 </script>
 
@@ -251,15 +296,31 @@
       <tr>
         <th>วันที่ต่ออายุ</th>
         <th>หมายเหตุ</th>
-        <th>ยอดเงิน</th>
+        <th class="text-end">ยอดเงิน</th>
+        <th width="110px"></th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
+      {#each memberships as item}
+        <tr>
+          <td>{dayjs(item.pay_date).format("DD/MM/YYYY")}</td>
+          <td>{item.remark}</td>
+          <td class="text-end">{item.money}</td>
+          <td class="text-center">
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#modalMembership"
+              on:click={() => chooseHistory(item)}
+            >
+              <i class="fa fa-pencil"></i>
+            </button>
+            <button class="btn btn-danger" on:click={() => removeHistory(item)}>
+              <i class="fa fa-times"></i>
+            </button>
+          </td>
+        </tr>
+      {/each}
     </tbody>
   </table>
 </MyModal>
