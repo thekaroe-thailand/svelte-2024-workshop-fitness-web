@@ -6,6 +6,7 @@
   import { onMount } from "svelte";
   import dayjs from "dayjs";
   import { expoIn } from "svelte/easing";
+  import Counter from "../Counter.svelte";
 
   let name = "";
   let gender = "male";
@@ -18,6 +19,10 @@
   let expireDate = new Date();
   let members = []; // ไว้เก็บค่าจาก Database มา loop แสดงผล
   let id = 0; // เอาไว้เก็บตอนแก้ไขข้อมูล
+  let money = 0;
+  let membershipExpireDate = null;
+  let remark = "";
+  let memberships = [];
 
   const save = async () => {
     try {
@@ -125,6 +130,53 @@
     expireDate = dayjs(item.expireDate).format("YYYY-MM-DD");
     id = item.id;
   };
+
+  const chooseMember = (item) => {
+    name = item.name;
+    id = item.id;
+    membershipExpireDate = dayjs(new Date()).format("YYYY-MM-DD");
+  };
+
+  const membershipSave = async () => {
+    try {
+      const payload = {
+        money: parseInt(money),
+        member_id: id,
+        expire_date: membershipExpireDate,
+        remark: remark,
+      };
+
+      await axios.post(config.apiPath + "/api/member/membership", payload);
+
+      fetchData();
+
+      document.getElementById("modalMembership_btnClose").click();
+    } catch (e) {
+      Swal.fire({
+        title: "error",
+        text: e.message,
+        icon: "error",
+      });
+    }
+  };
+
+  const showHistory = async (item) => {
+    try {
+      const res = await axios.get(
+        config.apiPath + "/api/member/membershipList/" + item.id
+      );
+
+      if (res.data.results !== undefined) {
+        memberships = res.data.results;
+      }
+    } catch (e) {
+      Swal.fire({
+        title: "error",
+        text: e.message,
+        icon: "error",
+      });
+    }
+  };
 </script>
 
 <div class="card">
@@ -159,6 +211,22 @@
             <td>{dayjs(item.expireDate).format("DD/MM/YYYY")}</td>
             <td class="text-center">
               <button
+                class="btn btn-secondary"
+                data-bs-toggle="modal"
+                data-bs-target="#modalHistory"
+                on:click={() => showHistory(item)}
+              >
+                <i class="fa fa-file-alt"></i>
+              </button>
+              <button
+                class="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#modalMembership"
+                on:click={() => chooseMember(item)}
+              >
+                <i class="fa fa-plus"></i>
+              </button>
+              <button
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#modalMember"
@@ -176,6 +244,49 @@
     </table>
   </div>
 </div>
+
+<MyModal id="modalHistory" title="ประวัติการต่ออายุสมาชิก">
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>วันที่ต่ออายุ</th>
+        <th>หมายเหตุ</th>
+        <th>ยอดเงิน</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</MyModal>
+
+<MyModal id="modalMembership" title="ต่ออายุสมาชิก">
+  <div>
+    <div>สมาชิก</div>
+    <input class="form-control" disabled bind:value={name} />
+  </div>
+  <div class="mt-3">
+    <div>ยอดเงิน</div>
+    <input class="form-control" bind:value={money} />
+  </div>
+  <div class="mt-3">
+    <div>วันสิ้นสุดการเป็นสมาชิก</div>
+    <input class="form-control" bind:value={membershipExpireDate} type="date" />
+  </div>
+  <div class="mt-3">
+    <div>หมายเหตุ</div>
+    <input class="form-control" bind:value={remark} />
+  </div>
+  <div class="mt-3">
+    <button class="btn btn-primary" on:click={() => membershipSave()}>
+      <i class="fa fa-plus me-2"></i>บันทึก
+    </button>
+  </div>
+</MyModal>
 
 <MyModal id="modalMember" title="สมาชิกร้าน">
   <div>
