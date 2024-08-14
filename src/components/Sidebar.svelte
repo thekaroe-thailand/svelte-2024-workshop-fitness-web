@@ -91,6 +91,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="/checkin" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>บันทึกการเข้ายิม</p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="/user" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>Users</p>
