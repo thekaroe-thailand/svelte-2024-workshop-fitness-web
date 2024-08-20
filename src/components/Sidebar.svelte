@@ -99,7 +99,7 @@
           <li class="nav-item">
             <a href="/user" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
-              <p>Users</p>
+              <p>เทรนเนอร์ และพนักงาน</p>
             </a>
           </li>
           <li class="nav-item">

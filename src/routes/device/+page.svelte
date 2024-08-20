@@ -11,10 +11,19 @@
   let remark = "";
   let devices = [];
   let sumAllRow = 0;
+  let id = 0;
 
   onMount(() => {
     fetchData();
   });
+
+  const chooseDevice = (item) => {
+    name = item.name;
+    price = item.price;
+    qty = item.qty;
+    remark = item.remark;
+    id = item.id;
+  };
 
   const fetchData = async () => {
     try {
@@ -46,7 +55,14 @@
         qty: parseInt(qty),
         remark: remark,
       };
-      await axios.post(config.apiPath + "/api/device/create", payload);
+
+      if (id > 0) {
+        await axios.put(config.apiPath + "/api/device/update/" + id, payload);
+        id = 0;
+      } else {
+        await axios.post(config.apiPath + "/api/device/create", payload);
+      }
+
       fetchData();
 
       document.getElementById("modalDevice_btnClose").click();
@@ -64,6 +80,29 @@
     remark = "";
     qty = 0;
     price = 0;
+  };
+
+  const remove = async (item) => {
+    try {
+      const button = await Swal.fire({
+        title: "ลบอุปกรณ์",
+        text: "ยืนยันการลบรายการ",
+        icon: "question",
+        showCancelButton: true,
+        showConfirmButton: true,
+      });
+
+      if (button.isConfirmed) {
+        await axios.delete(config.apiPath + "/api/device/remove/" + item.id);
+        fetchData();
+      }
+    } catch (e) {
+      Swal.fire({
+        title: "error",
+        text: e.message,
+        icon: "error",
+      });
+    }
   };
 </script>
 
@@ -97,10 +136,15 @@
             <td class="text-end">{item.qty}</td>
             <td class="text-end">{item.sumPerRow.toLocaleString("th-TH")}</td>
             <td class="text-center">
-              <button class="btn btn-primary">
+              <button
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modalDevice"
+                on:click={() => chooseDevice(item)}
+              >
                 <i class="fa fa-pencil"></i>
               </button>
-              <button class="btn btn-danger">
+              <button class="btn btn-danger" on:click={() => remove(item)}>
                 <i class="fa fa-times"></i>
               </button>
             </td>
