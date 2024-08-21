@@ -108,6 +108,12 @@
               <p>อุปกรณ์</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="/course" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>คอร์สเรียน</p>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>

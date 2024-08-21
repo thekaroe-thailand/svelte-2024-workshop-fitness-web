@@ -14,6 +14,7 @@
   let address = "";
   let gender = "male";
   let employees = []; // เก็บข้อมูลพนักงาน
+  let filter = {};
 
   const clearForm = () => {
     name = "";
@@ -141,6 +142,25 @@
     level = item.level;
     salary = item.salary;
   };
+
+  const handleFilter = async () => {
+    try {
+      const res = await axios.post(
+        config.apiPath + "/api/employeeAndTrainer/filter",
+        filter
+      );
+
+      if (res.data.results !== undefined) {
+        employees = res.data.results;
+      }
+    } catch (e) {
+      Swal.fire({
+        title: "error",
+        text: e.message,
+        icon: "error",
+      });
+    }
+  };
 </script>
 
 <div class="card mt-3">
@@ -158,28 +178,28 @@
     <div class="alert alert-info mt-2">
       <div class="row">
         <div class="col-3">
-          <select class="form-control">
-            <option>--- ทุกเพศ ---</option>
+          <select class="form-control" bind:value={filter.gender}>
+            <option value="all">--- ทุกเพศ ---</option>
             <option value="male">ชาย</option>
             <option value="female">หญิง</option>
           </select>
         </div>
         <div class="col-3">
-          <select class="form-control">
-            <option>--- ทุกระดับ ---</option>
+          <select class="form-control" bind:value={filter.level}>
+            <option value="all">--- ทุกระดับ ---</option>
             <option value="employee">พนักงาน</option>
             <option value="trainer">เทรนเนอร์</option>
           </select>
         </div>
         <div class="col-3">
-          <select class="form-control">
-            <option>--- ทุกสถานะ ---</option>
+          <select class="form-control" bind:value={filter.status}>
+            <option value="all">--- ทุกสถานะ ---</option>
             <option value="use">ปกติ</option>
             <option value="delete">ไม่ได้ทำงาน</option>
           </select>
         </div>
         <div class="col-3">
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" on:click={() => handleFilter()}>
             <i class="fa fa-search me-2"></i>แสดงข้อมูล
           </button>
         </div>
