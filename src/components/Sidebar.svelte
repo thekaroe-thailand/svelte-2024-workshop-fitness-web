@@ -114,6 +114,12 @@
               <p>คอร์สเรียน</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="/courseAndTrainer" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>เทรนเนอร์ ประจำคอร์ส</p>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
