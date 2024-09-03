@@ -15,6 +15,8 @@
   let gender = "male";
   let employees = []; // เก็บข้อมูลพนักงาน
   let filter = {};
+  let username = "";
+  let password = "";
 
   const clearForm = () => {
     name = "";
@@ -23,6 +25,8 @@
     salary = 0;
     phone = "";
     address = "";
+    username = "";
+    password = "";
   };
 
   const save = async () => {
@@ -34,6 +38,8 @@
         salary: parseInt(salary),
         phone: phone,
         address: address,
+        username: username,
+        password: password,
       };
 
       if (id > 0) {
@@ -141,6 +147,8 @@
     address = item.address;
     level = item.level;
     salary = item.salary;
+    username = item.username;
+    password = item.password;
   };
 
   const handleFilter = async () => {
@@ -285,6 +293,17 @@
     พนักงาน
     <input type="radio" value="trainer" name="level" bind:group={level} /> เทรนเนอร์
   </div>
+
+  <div class="mt-3">
+    <div>Username</div>
+    <input class="form-control" bind:value={username} />
+  </div>
+
+  <div class="mt-3">
+    <div>Password</div>
+    <input class="form-control" bind:value={password} />
+  </div>
+
   <button class="mt-3 btn btn-primary" on:click={() => save()}>
     <i class="fa fa-check me-2"></i>บันทึก
   </button>

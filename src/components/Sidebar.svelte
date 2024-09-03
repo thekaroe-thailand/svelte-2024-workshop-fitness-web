@@ -120,6 +120,18 @@
               <p>เทรนเนอร์ ประจำคอร์ส</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="/payRecord" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>บันทึกรายจ่าย</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/report/profit" class="nav-link">
+              <i class="nav-icon fa fa-th"></i>
+              <p>รายงานกำไร ขาดทุน</p>
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
