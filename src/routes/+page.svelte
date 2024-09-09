@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import axios from "axios";
   import Swal from "sweetalert2";
+  import config from "../config";
 
   let username = "";
   let password = "";
@@ -21,7 +22,7 @@
         };
 
         const res = await axios.post(
-          "http://localhost:3000/api/user/signIn",
+          config.apiPath + "/api/user/signIn",
           payload
         );
 
